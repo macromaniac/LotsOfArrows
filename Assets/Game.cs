@@ -14,6 +14,8 @@ public class Game : MonoBehaviour {
 	void Update() {
 		if (pathEater.hasStarted == true && gameTimeStart == 0f)
 			gameTimeStart = Time.time;
+
+		pathEater.tick();
 		if (path.isOutOfSegments()) {
 			finalGameTime = gameTime;
 			retry.isButtonShown = true;

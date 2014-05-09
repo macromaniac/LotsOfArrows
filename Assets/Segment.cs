@@ -24,7 +24,7 @@ public class Segment : MonoBehaviour {
 		get {
 
 			//This is the point where the next Segment will start before being translated and rotated
-			Vector3 displacementVector =  new Vector3(0,spriteHeight *.65f,0f);
+			Vector3 displacementVector =  new Vector3(0,spriteHeight *1.65f,0f);
 
 
 			float xNew = displacementVector.x * Mathf.Cos(rotationInRadians)
@@ -68,7 +68,7 @@ public class Segment : MonoBehaviour {
 		this.gameObject.transform.position = lastSegment.segmentEndPoint;
 		spriteHeight = GetComponent<SpriteRenderer>().bounds.size.y;
 		number+=1f;
-		float curAngle=40f*Mathf.Cos(number/20f);
+		float curAngle=20f*Mathf.Cos(number/20f);
 		transform.Rotate(new Vector3(0, 0, curAngle));
 	}
 	public static Segment genSegment(Segment lastSegment) {
