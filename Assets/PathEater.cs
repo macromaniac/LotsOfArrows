@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class PathEater : MonoBehaviour {
 
@@ -20,20 +21,6 @@ public class PathEater : MonoBehaviour {
 		this.transform.position = camPosXY + basePosition;
 		this.transform.position = new Vector3(xPos, this.transform.position.y, this.transform.position.z);
 	}
-	//TODO:Make this all a part of the pointer, no need to have it in patheater code
-	private void updatePointerPosition() {
-		Vector3 pos = pathEaterPointer.transform.position;
-		pos.y = this.transform.position.y;
-		pathEaterPointer.transform.position = pos;
-	}
-	private void updatePointerPosition(float x) {
-		updatePointerPosition();
-		Vector3 pos = pathEaterPointer.transform.position;
-		float xPosWorldPoint = Camera.main.ScreenToWorldPoint(new Vector3(x,0f)).x;
-		pathEaterPointer.transform.position=new Vector3(xPosWorldPoint,
-			pos.y,pos.z);
-
-	}
 	void Update () {
 		updateMyPosition();
 
@@ -45,18 +32,19 @@ public class PathEater : MonoBehaviour {
 			processInput(Input.mousePosition.x, Input.mousePosition.y);
 		}
 		alignWithClosestSegment();
-		updatePointerPosition();
 	}
 
+	public float getActualWidth() {
+		return pathEaterWidth * 3f;
+	}
 	public float getLeftWall (){
-		return this.transform.position.x - pathEaterWidth/2f;
+		return this.transform.position.x - getActualWidth()/2f;
 	}
 	public float getRightWall(){
-		return this.transform.position.x + pathEaterWidth/2f;
+		return this.transform.position.x + getActualWidth()/2f;
 	}
 	static int ticker = 0;
 	private void processInput(float x, float y) {
-		updatePointerPosition(x);
 		hasStarted = true;
 		Vector3 inputAsWorldPoint = Camera.main.ScreenToWorldPoint(new Vector3(x, y, 0f));
 		float inputWorldPointX = inputAsWorldPoint.x;
@@ -73,7 +61,9 @@ public class PathEater : MonoBehaviour {
 			}
 			ticker++;
 			Segment segment = alignWithClosestSegment();
-			float speed = segment.actualSpriteHeight*1.5f;
+			float distanceFromCenter = Math.Abs(this.transform.position.x - inputWorldPointX);
+			float percentCloseToMiddle = 1f- distanceFromCenter / (getActualWidth() / 2f);
+			float speed = segment.actualSpriteHeight * 1.3f * percentCloseToMiddle ;
 			Camera.main.transform.position = Camera.main.transform.position + new Vector3(0f, speed, 0f);
 			updateMyPosition();
 			path.refreshPathForCamera();
